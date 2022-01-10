@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "966831894205",
+    "project_id": "muhadara-f2a6b",
+    "storage_bucket": "muhadara-f2a6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966831894205:android:a79af4fa27517777eed1d4",
+        "android_client_info": {
+          "package_name": "com.example.muhadara"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966831894205-87btqb5fpos1v67jsubkim6obmv8ov3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0EJArVu8O3SyLMoojoK2Os2dSy2JM920"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966831894205-87btqb5fpos1v67jsubkim6obmv8ov3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

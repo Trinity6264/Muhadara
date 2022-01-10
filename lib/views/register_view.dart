@@ -60,33 +60,52 @@ class RegisterView extends StatelessWidget with $RegisterView {
                   ),
                   const SizedBox(height: 30),
                   TextField(
+                    obscureText: model.isSecured,
                     decoration: inputDec.copyWith(
                       hintText: 'Password',
                       prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        onPressed: () => model.changedObs(),
+                        icon: Icon(
+                          model.isSecured
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                      ),
                     ),
                     controller: passwordController,
                     textInputAction: TextInputAction.done,
                     keyboardType: TextInputType.visiblePassword,
                   ),
                   const SizedBox(height: 30),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: secColor,
-                      ),
-                      onPressed: () {},
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
+                  model.isBusy
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: secColor,
+                          ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: secColor,
+                            ),
+                            onPressed: () => model.signUp(
+                              displayName: nameController.text.trim(),
+                              email: emailController.text.trim(),
+                              pass: passwordController.text.trim(),
+                            ),
+                            child: const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                   RichText(
                     text: TextSpan(children: [

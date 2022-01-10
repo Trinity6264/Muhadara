@@ -1,11 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:muhadara/app/app.locator.dart';
 import 'package:muhadara/app/app.router.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ],
+  );
   setupLocator();
   runApp(const MyApp());
 }
@@ -27,9 +36,15 @@ class MyApp extends StatelessWidget {
           backgroundColor: primaryColor,
           elevation: 10,
           selectedLabelStyle: TextStyle(
-              color: secColor, fontFamily: 'Montserrat', fontSize: 14.0),
+            color: secColor,
+            fontFamily: 'Montserrat',
+            fontSize: 14.0,
+          ),
           unselectedLabelStyle: TextStyle(
-              color: colorGrey, fontFamily: 'Montserrat', fontSize: 12.0),
+            color: colorGrey,
+            fontFamily: 'Montserrat',
+            fontSize: 12.0,
+          ),
           selectedItemColor: secColor,
           unselectedItemColor: Colors.white60,
           showUnselectedLabels: true,
