@@ -29,7 +29,7 @@ class RecommendedView extends StatelessWidget {
                         final data = model.recommendedData![index];
                         return GestureDetector(
                           onTap: () {
-                            model.toPlayer(data,);
+                            model.toPlayer(data);
                           },
                           child: Container(
                             margin: const EdgeInsets.only(left: 5.0, top: 2.0),

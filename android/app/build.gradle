@@ -46,7 +46,7 @@ android {
         applicationId "com.example.muhadara"
         apply plugin: 'com.google.gms.google-services'
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

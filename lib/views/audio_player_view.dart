@@ -12,10 +12,19 @@ class AudioPlayerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildTimer(Duration duration) {
+      String twoDigits(int n) => n.toString().padLeft(2, '0');
+      final minutes = twoDigits(duration.inMinutes.remainder(60));
+      final seconds = twoDigits(duration.inSeconds.remainder(60));
+      return Text(
+        '$minutes: $seconds',
+        style: const TextStyle(color: primaryColor),
+      );
+    }
+
     return ViewModelBuilder<AudioPlayerViewModel>.reactive(
       onModelReady: (model) =>
           model.initAudioPlayer(content!.audioUrl.toString()),
-      onDispose: (model) => model.disposeAudio(),
       builder:
           (BuildContext context, AudioPlayerViewModel model, Widget? child) {
         Size size = MediaQuery.of(context).size;
@@ -104,12 +113,12 @@ class AudioPlayerView extends StatelessWidget {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.repeat),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.shuffle),
+                          onPressed: () {
+                            model.repeatBtn();
+                          },
+                          icon: Icon(!model.isRepeat
+                              ? Icons.repeat
+                              : Icons.repeat_one_rounded),
                         ),
                         IconButton(
                           onPressed: () {
@@ -128,20 +137,8 @@ class AudioPlayerView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '0${model.position.inMinutes}:${model.position.inSeconds}',
-                      style: const TextStyle(
-                        color: primaryColor,
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    Text(
-                      '${model.duration.inMinutes}:${model.duration.inSeconds}',
-                      style: const TextStyle(
-                        color: primaryColor,
-                        fontSize: 15.0,
-                      ),
-                    ),
+                    buildTimer(model.position),
+                    buildTimer(model.duration),
                   ],
                 ),
               ),
@@ -164,18 +161,24 @@ class AudioPlayerView extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        model.stop();
+                        model.slowBtn();
                       },
                       icon: const Icon(Icons.skip_previous_outlined),
                     ),
+                    model.initialised
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : IconButton(
+                            onPressed: () => model
+                                .playingState(content!.audioUrl.toString()),
+                            icon: Icon(
+                              model.isPlaying ? Icons.pause : Icons.play_arrow,
+                            )),
                     IconButton(
-                        onPressed: () =>
-                            model.playingState(content!.audioUrl.toString()),
-                        icon: Icon(
-                          model.isPlaying ? Icons.pause : Icons.play_arrow,
-                        )),
-                    IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        model.fastBtn();
+                      },
                       icon: const Icon(Icons.skip_next_outlined),
                     ),
                   ],

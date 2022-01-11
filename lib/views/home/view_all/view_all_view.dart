@@ -74,7 +74,10 @@ class ViewAllView extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          model.downLoad();
+                          model.openFiless(
+                            data.audioUrl!,
+                            '${data.lecturerName}.mp3',
+                          );
                         },
                         icon: const Icon(
                           Icons.download_for_offline_outlined,

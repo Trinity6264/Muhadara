@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:muhadara/app/app.locator.dart';
+import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stacked/stacked.dart';
@@ -12,19 +14,31 @@ class AudioPlayerViewModel extends BaseViewModel {
   final _snackBar = locator<SnackbarService>();
   bool isPlaying = false;
   bool isMute = false;
+  bool isRepeat = false;
   double progressIndicato = 0.0;
   Dio? _dio;
   Duration duration = const Duration();
   Duration position = const Duration();
   AudioPlayer? _audioPlayer;
-
-  void disposeAudio() {
-    _audioPlayer?.dispose();
-  }
+  PlayerState? playerState;
 
   void initAudioPlayer(String url) async {
     _dio = Dio();
-    _audioPlayer = AudioPlayer();
+    setBusy(true);
+
+    _audioPlayer = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER, playerId: '');
+    int? playing = await _audioPlayer?.play(url);
+    if (playing == 1 && _audioPlayer?.state == PlayerState.PLAYING) {
+      isPlaying = true;
+      _audioPlayer?.setPlaybackRate(rate);
+      setBusy(false);
+      notifyListeners();
+    } else {
+      setBusy(false);
+      await _audioPlayer?.stop();
+      _snackBar.registerSnackbarConfig(SnackbarConfig(messageColor: secColor));
+      _snackBar.showSnackbar(message: 'Could not play song');
+    }
     _audioPlayer?.onAudioPositionChanged.listen((pos) {
       position = pos;
       notifyListeners();
@@ -108,14 +122,12 @@ class AudioPlayerViewModel extends BaseViewModel {
       }
       if (await _diretory.exists()) {
         File savedFile = File(_diretory.path + '/$fileName');
-        await _dio?.download(
-          url,
-          savedFile,
-          onReceiveProgress: (count, total) {
-            progressIndicato = count / total;
-            notifyListeners();
-          },
-        );
+        await _dio?.download(url, savedFile,
+            onReceiveProgress: (received, total) {
+          if (total != -1) {
+            debugPrint((received / total * 100).toStringAsFixed(0) + "%");
+          }
+        });
       }
     } catch (e) {
       print(e);
@@ -148,7 +160,40 @@ class AudioPlayerViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void next(int index) {
-    if (index == 0) {}
+  double rate = 1.0;
+  void slowBtn() {
+    if (isPlaying) {
+      if (rate == 0.5) return;
+      rate -= 0.5;
+      _audioPlayer?.setPlaybackRate(rate);
+      _snackBar.registerSnackbarConfig(SnackbarConfig(messageColor: secColor));
+      _snackBar.showSnackbar(
+        message: 'Speed Frequency: $rate',
+        duration: const Duration(seconds: 1),
+      );
+    }
+  }
+
+  void fastBtn() {
+    if (isPlaying) {
+      if (rate == 2.0) return;
+      rate += 0.5;
+      _audioPlayer?.setPlaybackRate(rate);
+      _snackBar.registerSnackbarConfig(SnackbarConfig(messageColor: secColor));
+      _snackBar.showSnackbar(
+        message: 'Speed Frequency: $rate',
+        duration: const Duration(seconds: 1),
+      );
+    }
+  }
+
+  void repeatBtn() {
+    isRepeat = !isRepeat;
+    if (isRepeat) {
+      _audioPlayer?.setReleaseMode(ReleaseMode.LOOP);
+    } else {
+      _audioPlayer?.setReleaseMode(ReleaseMode.STOP);
+    }
+    notifyListeners();
   }
 }
