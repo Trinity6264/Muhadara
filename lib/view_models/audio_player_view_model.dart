@@ -108,8 +108,8 @@ class AudioPlayerViewModel extends BaseViewModel {
             } else {
               break;
             }
-            newPth = newPth + '/muhadara';
-            _diretory = Directory(newPth);
+            newPth = newPth + 'muhadara';
+            _diretory = await Directory(newPth+'/'+'muhadara').create(recursive: true);
             print("Play" + _diretory.toString());
           }
         } else {

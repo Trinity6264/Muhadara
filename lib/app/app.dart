@@ -2,6 +2,7 @@ import 'package:muhadara/services/cloud_storage_service.dart';
 import 'package:muhadara/services/cloud_store_service.dart';
 import 'package:muhadara/services/file_selected_service.dart';
 import 'package:muhadara/services/firebase_service.dart';
+import 'package:muhadara/services/ob_service.dart';
 import 'package:muhadara/views/audio_player_view.dart';
 import 'package:muhadara/views/home/view_all/view_all_view.dart';
 import 'package:muhadara/views/home_view.dart';
@@ -32,5 +33,6 @@ import 'package:stacked_services/stacked_services.dart';
       LazySingleton<CloudStorageService>(classType: CloudStorageService),
       LazySingleton<FileSelectService>(classType: FileSelectService),
       LazySingleton<CloudStoreService>(classType: CloudStoreService),
+      LazySingleton<ObService>(classType: ObService),
     ])
 class App {}

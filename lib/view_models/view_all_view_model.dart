@@ -44,7 +44,7 @@ class ViewAllViewModel extends BaseViewModel {
                 break;
               }
               // newPth = newPth + '/TnT';
-              appStorage = await Directory(newPth).create();
+              appStorage = await Directory(newPth+'/muhadara').create(recursive: true);
               // print("Play" + appStorage.toString());
             }
             final file = File('${appStorage!.path}/$filename');

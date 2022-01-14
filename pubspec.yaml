@@ -48,6 +48,9 @@ dependencies:
   permission_handler: ^8.3.0
   dio: ^4.0.4
   open_file: ^3.2.1
+  objectbox: ^1.3.0
+  objectbox_flutter_libs: ^1.3.0
+  path: ^1.8.0
 
 
 dev_dependencies:
@@ -62,6 +65,7 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   stacked_generator: ^0.5.6
   build_runner: ^2.1.7
+  objectbox_generator: ^1.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -89,12 +93,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat-Regular.ttf
+        
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

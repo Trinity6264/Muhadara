@@ -2,7 +2,6 @@
 import 'package:muhadara/app/app.locator.dart';
 import 'package:muhadara/app/app.router.dart';
 import 'package:muhadara/model/post_content_model.dart';
-import 'package:muhadara/model/user_model.dart';
 import 'package:muhadara/services/cloud_store_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

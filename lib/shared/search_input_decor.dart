@@ -13,7 +13,7 @@ InputDecoration searchInputDecor = InputDecoration(
   ),
   fillColor: secColor,
   filled: true,
-  hintText: 'Search',
+  hintText: '    Search',
   hintStyle: const TextStyle(color: primaryColor),
   focusColor: primaryColor,
   focusedBorder: OutlineInputBorder(

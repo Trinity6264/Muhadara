@@ -26,7 +26,36 @@ class CloudStoreService {
             .map((e) => PostContentModel.fromMap(e.data()))
             .toList();
       }
-    } on FirebaseException catch (e) {}
+    } on Exception catch (e) {}
     return [];
   }
+
+  // search content from firestore
+  Future<List<PostContentModel>> getSearch(String lecturerName) async {
+    try {
+      final data = await _post
+          .where('lecturerName', isGreaterThanOrEqualTo: lecturerName)
+          .get(const GetOptions(source: Source.serverAndCache));
+      if (data.docs.isNotEmpty) {
+        return data.docs
+            .map((e) => PostContentModel.fromMap(e.data()))
+            .toList();
+      }
+    } on Exception catch (e) {
+      print(e);
+      return [];
+    }
+    return [];
+  }
+
+  // List<PostContentModel>? _postContent(QuerySnapshot? snapshots) {
+  //   return snapshots?.docs != null ? snapshots?.docs.map((e) {
+  //     PostContentModel(
+  //       audioUrl: e['audioUrl'],
+  //       imageurl: e['imageurl'],
+  //       lectureTitle: e['lectureTitle'],
+  //       lecturerName: e['lecturerName'],
+  //     );
+  //   }).toList():
+  // }
 }

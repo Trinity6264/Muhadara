@@ -43,6 +43,7 @@ class HomeView extends StatelessWidget {
               userName ?? 'Home',
               style: const TextStyle(
                 color: primaryColor,
+                fontFamily: 'Montserrat',
               ),
             ),
           ),
@@ -75,13 +76,13 @@ class HomeView extends StatelessWidget {
   Widget? getViewFormIndex(int index) {
     switch (index) {
       case 0:
-        return const  HomeSubView();
+        return const HomeSubView();
 
       case 1:
-        return  LectureView();
+        return LectureView();
 
       case 2:
-        return  SearchView();
+        return SearchView();
 
       case 3:
         return const LibraryView();
