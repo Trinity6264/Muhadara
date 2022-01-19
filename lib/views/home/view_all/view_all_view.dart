@@ -1,8 +1,12 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:muhadara/model/post_content_model.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:muhadara/view_models/view_all_view_model.dart';
+import 'package:muhadara/views/widgets/shimmer_effect.dart';
 import 'package:stacked/stacked.dart';
 
 class ViewAllView extends StatelessWidget {
@@ -51,11 +55,18 @@ class ViewAllView extends StatelessWidget {
                       leading: ClipRRect(
                         clipBehavior: Clip.hardEdge,
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(
-                          data!.imageurl!,
+                        child: CachedNetworkImage(
+                          imageUrl: data!.imageurl.toString(),
+                          useOldImageOnUrlChange: true,
+                          placeholder: (context, index) {
+                            return imageContainer();
+                          },
+                          errorWidget: (context, url, error) {
+                            return Image.asset('images/noimage.jpg');
+                          },
+                          fit: BoxFit.cover,
                           height: _size.height * 0.1,
                           width: _size.width * 0.2,
-                          fit: BoxFit.cover,
                         ),
                       ),
                       title: Text(
@@ -74,10 +85,22 @@ class ViewAllView extends StatelessWidget {
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          model.openFiless(
+                          showDownLoadBanner(model, context, data);
+                          model
+                              .openFiless(
                             data.audioUrl!,
-                            '${data.lecturerName}.mp3',
-                          );
+                            data.imageurl!,
+                            DateTime.now().millisecondsSinceEpoch.toString(),
+                            data.lectureTitle.toString(),
+                            data.lecturerName.toString(),
+                          )
+                              .onError((error, stackTrace) {
+                            model.downloadFailed(error.toString());
+                            hideDownLoadBanner(context);
+                          }).whenComplete(() {
+                            hideDownLoadBanner(context);
+                            model.downLoadPositionStream?.close();
+                          });
                         },
                         icon: const Icon(
                           Icons.download_for_offline_outlined,
@@ -92,6 +115,44 @@ class ViewAllView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void hideDownLoadBanner(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+  }
+
+  void showDownLoadBanner(
+      ViewAllViewModel model, BuildContext context, PostContentModel data) {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      MaterialBanner(
+        backgroundColor: primaryColor,
+        content: Text('Downloading ${data.lectureTitle}',
+            style: const TextStyle(color: secColor)),
+        forceActionsBelow: true,
+        leading: StreamBuilder<double>(
+            stream: model.downLoadPositionStream?.stream.asBroadcastStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                model.downloadFailed('Download Failed!');
+                hideDownLoadBanner(context);
+                model.downLoadPositionStream?.close();
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              return CircularProgressIndicator.adaptive(
+                value: snapshot.data,
+              );
+            }),
+        actions: [
+          TextButton(
+            onPressed: () {
+              hideDownLoadBanner(context);
+            },
+            child: const Text('Dismiss', style: TextStyle(color: secColor)),
+          )
+        ],
+      ),
     );
   }
 }

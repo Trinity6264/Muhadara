@@ -1,62 +1,62 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:muhadara/app/app.locator.dart';
+import 'package:muhadara/services/file_download_service.dart';
+import 'package:muhadara/services/ob_service.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ViewAllViewModel extends BaseViewModel {
   final _snackService = locator<SnackbarService>();
+  final _obService = locator<ObService>();
+  final _fileDownloadService = locator<FileDownloadService>();
+  double downLoadPosition = 0.0;
+  bool isDownloading = false;
 
-  Future<bool> _requestPermit(Permission permission) async {
-    if (await permission.isGranted) {
-      return true;
-    } else {
-      var result = await permission.request();
-      if (result.isGranted) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+  StreamController<double>? downLoadPositionStream = StreamController();
+
+  void downloadFailed(String message) {
+    _snackService.registerSnackbarConfig(SnackbarConfig(
+      messageColor: secColor,
+    ));
+    _snackService.showSnackbar(message: message);
   }
 
-  Future<File?> downLoad(String url, String filename) async {
+  void dispo() {
+    downLoadPositionStream?.close();
+  }
+
+  FutureOr<File?> downLoad(String url, String filename, int index) async {
     try {
       if (Platform.isAndroid) {
-        if (await _requestPermit(Permission.storage)) {
+        setBusy(true);
+        if (await _fileDownloadService.requestPermit(Permission.storage)) {
           var status = await Permission.storage.isGranted;
           if (status) {
-            Directory? appStorage = await getExternalStorageDirectory();
-            debugPrint(appStorage?.path);
-            String newPth = '';
-            List<String> pathList = appStorage!.path.split('/');
-            for (int i = 1; i < pathList.length; i++) {
-              String folder = pathList[i];
-              if (folder != 'files') {
-                newPth += "/" + folder;
-              } else {
-                break;
-              }
-              // newPth = newPth + '/TnT';
-              appStorage = await Directory(newPth+'/muhadara').create(recursive: true);
-              // print("Play" + appStorage.toString());
-            }
-            final file = File('${appStorage!.path}/$filename');
+            String folder = index == 0
+                ? await _fileDownloadService.createFolder('Audio')
+                : await _fileDownloadService.createFolder('Artwork');
+            final file = File('$folder/$filename');
             final response = await Dio().get(url,
+
                 options: Options(
                   responseType: ResponseType.bytes,
                   followRedirects: false,
                   receiveTimeout: 0,
                 ), onReceiveProgress: (received, total) {
+              setBusy(false);
               if (total != -1) {
-                debugPrint((received / total * 100).toStringAsFixed(0) + "%");
+                downLoadPosition = received / total * 100 / 100;
+                downLoadPositionStream?.add(downLoadPosition);
+                notifyListeners();
               }
+            }).whenComplete(() {
+              downLoadPositionStream?.close();
             });
             final raf = file.openSync(mode: FileMode.write);
             raf.writeFromSync(response.data);
@@ -67,6 +67,7 @@ class ViewAllViewModel extends BaseViewModel {
             return file;
           }
         }
+        setBusy(false);
       }
     } on FileSystemException catch (e) {
       debugPrint(e.path);
@@ -76,10 +77,25 @@ class ViewAllViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> openFiless(String url, String filename) async {
-    final file = await downLoad(url, filename);
-    if (file == null) return;
-    print('File in ${file.path}');
-    OpenFile.open(file.path);
+  Future<void> openFiless(
+    String audioUrl,
+    String imageUrl,
+    String filename,
+    String lectureTitle,
+    String lecturerName,
+  ) async {
+    final audioFile = await downLoad(audioUrl, filename, 0);
+    final artWorkFile = await downLoad(imageUrl, filename, 1);
+    if (audioFile == null || artWorkFile == null) return;
+    _obService.insertDownloadData(
+      audioPath: audioFile.path,
+      imagePath: artWorkFile.path,
+      lectureTitle: lectureTitle,
+      lecturerName: lecturerName,
+      savedAt: DateTime.now(),
+    );
+    _snackService.showSnackbar(message: 'Downloaded successfully');
+    print('File in ${artWorkFile.path}');
+    // OpenFile.open(artWorkFile.path);
   }
 }

@@ -1,14 +1,28 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:stacked/stacked.dart';
+
 import 'package:muhadara/model/post_content_model.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:muhadara/view_models/audio_player_view_model.dart';
-import 'package:stacked/stacked.dart';
 
 class AudioPlayerView extends StatelessWidget {
-  final PostContentModel? content;
+  final String? audioUrl;
+  final String? imageurl;
+  final String? lectureTitle;
+  final String? lecturerName;
+  final DateTime? postedAt;
   final int? index;
-  const AudioPlayerView({Key? key, required this.content, this.index})
-      : super(key: key);
+  const AudioPlayerView({
+    Key? key,
+    this.audioUrl,
+    this.imageurl,
+    this.lectureTitle,
+    this.lecturerName,
+    this.postedAt,
+    this.index,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +37,7 @@ class AudioPlayerView extends StatelessWidget {
     }
 
     return ViewModelBuilder<AudioPlayerViewModel>.reactive(
-      onModelReady: (model) =>
-          model.initAudioPlayer(content!.audioUrl.toString()),
+      onModelReady: (model) => model.initAudioPlayer(audioUrl.toString()),
       builder:
           (BuildContext context, AudioPlayerViewModel model, Widget? child) {
         Size size = MediaQuery.of(context).size;
@@ -51,26 +64,40 @@ class AudioPlayerView extends StatelessWidget {
                   color: Colors.transparent,
                   elevation: 15.0,
                   shadowColor: Colors.indigo,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(
-                          content!.imageurl.toString(),
+                  child: index == 1
+                      ? Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: FileImage(File(
+                                imageurl?.toString() ?? 'images/noimage.jpg',
+                              )),
+                            ),
+                          ),
+                          height: size.height * 0.4,
+                          width: size.width * 1.4,
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: NetworkImage(
+                                imageurl?.toString() ?? 'images/noimage.jpg',
+                              ),
+                            ),
+                          ),
+                          height: size.height * 0.4,
+                          width: size.width * 1.4,
                         ),
-                      ),
-                    ),
-                    height: size.height * 0.4,
-                    width: size.width * 1.4,
-                  ),
                 ),
               ),
               const SizedBox(height: 20),
               SizedBox(
                 width: size.width - 110,
                 child: Text(
-                  content!.lectureTitle.toString(),
+                  lectureTitle.toString(),
                   softWrap: true,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
@@ -86,7 +113,7 @@ class AudioPlayerView extends StatelessWidget {
               SizedBox(
                 width: size.width - 140,
                 child: Text(
-                  content!.lecturerName.toString(),
+                  lecturerName.toString(),
                   softWrap: true,
                   overflow: TextOverflow.fade,
                   textAlign: TextAlign.center,
@@ -122,8 +149,8 @@ class AudioPlayerView extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            model.downloadFile(content!.audioUrl.toString(),
-                                content!.lecturerName.toString());
+                            model.downloadFile(
+                                audioUrl.toString(), lecturerName.toString());
                           },
                           icon: const Icon(Icons.download),
                         ),
@@ -170,8 +197,8 @@ class AudioPlayerView extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           )
                         : IconButton(
-                            onPressed: () => model
-                                .playingState(content!.audioUrl.toString()),
+                            onPressed: () =>
+                                model.playingState(audioUrl.toString()),
                             icon: Icon(
                               model.isPlaying ? Icons.pause : Icons.play_arrow,
                             )),

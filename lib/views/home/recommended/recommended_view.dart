@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:muhadara/view_models/home_sub_view_model.dart';
@@ -13,7 +14,7 @@ class RecommendedView extends StatelessWidget {
       onModelReady: (model) => model.fecthAll(0),
       fireOnModelReadyOnce: true,
       initialiseSpecialViewModelsOnce: true,
-      builder:(BuildContext contxt, HomeSubViewModel model, Widget? child) {
+      builder: (BuildContext contxt, HomeSubViewModel model, Widget? child) {
         Size _size = MediaQuery.of(context).size;
         return model.isBusy
             ? const ShimmerEffect()
@@ -29,7 +30,13 @@ class RecommendedView extends StatelessWidget {
                         final data = model.recommendedData![index];
                         return GestureDetector(
                           onTap: () {
-                            model.toPlayer(data);
+                            model.toPlayer(
+                              audioUrl: data.audioUrl.toString(),
+                              imageurl: data.imageurl.toString(),
+                              lectureTitle: data.lectureTitle.toString(),
+                              lecturerName: data.lecturerName.toString(),
+                              postedAt: data.postedAt!,
+                            );
                           },
                           child: Container(
                             margin: const EdgeInsets.only(left: 5.0, top: 2.0),
@@ -38,8 +45,16 @@ class RecommendedView extends StatelessWidget {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    data.imageurl.toString(),
+                                  child: CachedNetworkImage(
+                                    imageUrl: data.imageurl.toString(),
+                                    useOldImageOnUrlChange: true,
+                                    placeholder: (context, index) {
+                                      return imageContainer();
+                                    },
+                                   
+                                    errorWidget: (context, url, error) {
+                                      return Image.asset('images/noimage.jpg');
+                                    },
                                     fit: BoxFit.cover,
                                     height: 130.0,
                                     width: 200,

@@ -21,9 +21,48 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "2:6141832184088443679",
+      "lastPropertyId": "6:189613471541759046",
+      "name": "OfflineDownloadModel",
+      "properties": [
+        {
+          "id": "1:8278835608736003502",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7433928685047026282",
+          "name": "audioPath",
+          "type": 9
+        },
+        {
+          "id": "3:4391213180788326085",
+          "name": "imagePath",
+          "type": 9
+        },
+        {
+          "id": "4:2775488763164535646",
+          "name": "lecturerName",
+          "type": 9
+        },
+        {
+          "id": "5:3913185753270949313",
+          "name": "lectureTitle",
+          "type": 9
+        },
+        {
+          "id": "6:189613471541759046",
+          "name": "savedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "1:7335588098713592303",
+  "lastEntityId": "2:6141832184088443679",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

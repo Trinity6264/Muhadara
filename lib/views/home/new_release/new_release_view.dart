@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:muhadara/view_models/home_sub_view_model.dart';
@@ -30,7 +31,11 @@ class NewReleaseView extends StatelessWidget {
                         return GestureDetector(
                           onTap: () {
                             model.toPlayer(
-                              data,
+                              audioUrl: data.audioUrl.toString(),
+                              imageurl: data.imageurl.toString(),
+                              lectureTitle: data.lectureTitle.toString(),
+                              lecturerName: data.lecturerName.toString(),
+                              postedAt: data.postedAt!,
                             );
                           },
                           child: Container(
@@ -40,12 +45,20 @@ class NewReleaseView extends StatelessWidget {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    data.imageurl.toString(),
-                                    fit: BoxFit.cover,
-                                    height: 130.0,
-                                    width: 200,
-                                  ),
+                                  child:  CachedNetworkImage(
+                                imageUrl: data.imageurl.toString(),
+                                useOldImageOnUrlChange: true,
+                                placeholder: (context, index) {
+                                  
+                                  return imageContainer();
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Image.asset('images/noimage.jpg');
+                                },
+                                fit: BoxFit.cover,
+                                height: 130.0,
+                                width: 200,
+                              ),
                                 ),
                                 SizedBox(
                                   width: 200,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:muhadara/model/post_content_model.dart';
 import 'package:muhadara/model/user_model.dart';
@@ -5,7 +7,7 @@ import 'package:muhadara/model/user_model.dart';
 class CloudStoreService {
   final _user = FirebaseFirestore.instance.collection('Users');
   final _post = FirebaseFirestore.instance.collection('Content');
-
+  bool isNotFound = false;
   // add new user
   Future addNewuser(UserModel userModel) async {
     return _user.doc(userModel.id).set(userModel.toMap());
@@ -21,12 +23,16 @@ class CloudStoreService {
     try {
       var postDocs =
           await _post.orderBy(field, descending: true).limit(20).get();
-      if (postDocs.docs.isNotEmpty) {
+      if (postDocs.docs.isNotEmpty
+      ) {
         return postDocs.docs
             .map((e) => PostContentModel.fromMap(e.data()))
             .toList();
       }
-    } on Exception catch (e) {}
+    } on SocketException catch (e) {
+      isNotFound = true;
+      print(e.message);
+    }
     return [];
   }
 
@@ -41,21 +47,12 @@ class CloudStoreService {
             .map((e) => PostContentModel.fromMap(e.data()))
             .toList();
       }
-    } on Exception catch (e) {
-      print(e);
+    } on SocketException catch (e) {
+            isNotFound = true;
+      print(e.message);
       return [];
     }
     return [];
   }
-
-  // List<PostContentModel>? _postContent(QuerySnapshot? snapshots) {
-  //   return snapshots?.docs != null ? snapshots?.docs.map((e) {
-  //     PostContentModel(
-  //       audioUrl: e['audioUrl'],
-  //       imageurl: e['imageurl'],
-  //       lectureTitle: e['lectureTitle'],
-  //       lecturerName: e['lecturerName'],
-  //     );
-  //   }).toList():
-  // }
 }
+

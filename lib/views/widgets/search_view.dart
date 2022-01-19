@@ -23,64 +23,63 @@ class SearchView extends StatelessWidget with $SearchView {
       viewModelBuilder: () => SearchViewModel(),
       builder: (context, model, child) {
         return Scaffold(
-          body: SingleChildScrollView(
-            key: const PageStorageKey('searchView'),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: size.height * 0.1 / 2.2,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: TextField(
-                            focusNode: searchFocusNode,
-                            decoration: searchInputDecor.copyWith(
-                              suffixIcon: IconButton(
-                                  icon: const Icon(Icons.close, size: 20.0),
-                                  onPressed: () {
-                                    searchFocusNode.unfocus();
-                                    searchController.clear();
-                                  }),
-                            ),
-                            controller: searchController,
-                            textAlign: TextAlign.justify,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: size.height * 0.1 / 2.2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: TextField(
+                          focusNode: searchFocusNode,
+                          decoration: searchInputDecor.copyWith(
+                            suffixIcon: IconButton(
+                                icon: const Icon(Icons.close, size: 20.0),
+                                onPressed: () {
+                                  searchFocusNode.unfocus();
+                                  searchController.clear();
+                                }),
                           ),
+                          controller: searchController,
+                          textAlign: TextAlign.justify,
                         ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        searchFocusNode.unfocus();
-                        model.fetchPost(searchController.text.trim());
-                        model.addData(searchController.text.trim());
-                      },
-                      child: const Text(
-                        'Search',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10.0),
-                  child: Text(
-                    'Recent Searches',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.w500,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      searchFocusNode.unfocus();
+                      model.fetchPost(searchController.text.trim());
+                      model.addData(searchController.text.trim());
+                    },
+                    child: const Text(
+                      'Search',
+                      style: TextStyle(fontSize: 18),
                     ),
                   ),
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10.0),
+                child: Text(
+                  'Recent Searches',
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                model.isBusy
-                    ? const Center(
-                        child: CircularProgressIndicator(color: primaryColor),
-                      )
-                    : model.cloudStoreList.isEmpty && model.storeList.isEmpty
-                        ? model.cloudStoreList.isEmpty && model.dataReady
-                            ? ListView.builder(
+              ),
+              model.isBusy
+                  ? const Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    )
+                  : model.cloudStoreList.isEmpty && model.storeList.isEmpty
+                      ? model.cloudStoreList.isEmpty && model.dataReady
+                          ? Expanded(
+                              child: ListView.builder(
                                 itemCount: model.data!.length,
                                 shrinkWrap: true,
                                 reverse: true,
@@ -100,57 +99,61 @@ class SearchView extends StatelessWidget with $SearchView {
                                     ),
                                   );
                                 },
-                              )
-                            : const Center(
-                                child: Text(
-                                  'No Data',
-                                  style: TextStyle(
-                                    color: primaryColor,
-                                  ),
+                              ),
+                            )
+                          : const Center(
+                              child: Text(
+                                'No Data',
+                                style: TextStyle(
+                                  color: primaryColor,
                                 ),
-                              )
-                        : ListView.builder(
+                              ),
+                            )
+                      : Expanded(
+                          child: ListView.builder(
                             itemCount: model.cloudStoreList.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               final data = model.cloudStoreList[index];
-                              return Hero(
-                                transitionOnUserGestures: true,
-                                tag: data,
-                                child: ListTile(
-                                  onTap: () {
-                                    searchFocusNode.unfocus();
-                                    model.toPlayer(data);
-                                  },
-                                  leading: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image.network(
-                                      data.imageurl.toString(),
-                                      width: size.width * 0.2,
-                                      height: size.height * 0.2,
-                                      fit: BoxFit.fill,
-                                    ),
+                              return ListTile(
+                                onTap: () {
+                                  searchFocusNode.unfocus();
+                                  model.toPlayer(
+                                    audioUrl: data.audioUrl.toString(),
+                                    imageurl: data.imageurl.toString(),
+                                    lectureTitle: data.lectureTitle.toString(),
+                                    lecturerName: data.lecturerName.toString(),
+                                    postedAt: data.postedAt!,
+                                  );
+                                },
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image.network(
+                                    data.imageurl.toString(),
+                                    width: size.width * 0.2,
+                                    height: size.height * 0.2,
+                                    fit: BoxFit.fill,
                                   ),
-                                  title: Text(
-                                    data.lecturerName.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryColor,
-                                    ),
+                                ),
+                                title: Text(
+                                  data.lecturerName.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: primaryColor,
                                   ),
-                                  subtitle: Text(
-                                    data.lectureTitle.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: primaryColor,
-                                    ),
+                                ),
+                                subtitle: Text(
+                                  data.lectureTitle.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    color: primaryColor,
                                   ),
                                 ),
                               );
                             },
                           ),
-              ],
-            ),
+                        ),
+            ],
           ),
         );
       },

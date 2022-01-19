@@ -35,10 +35,23 @@ class SearchViewModel extends StreamViewModel<List<SearchModel>> {
     _obService.insertData(searchText);
   }
 
-  void toPlayer(PostContentModel postContent) {
+  void toPlayer({
+    required String audioUrl,
+    required String imageurl,
+    required String lectureTitle,
+    required String lecturerName,
+    required DateTime postedAt,
+  }) {
     _navService.navigateTo(
       Routes.audioPlayerView,
-      arguments: AudioPlayerViewArguments(content: postContent, index: 0),
+      arguments: AudioPlayerViewArguments(
+        index: 0,
+        audioUrl: audioUrl,
+        imageurl: imageurl,
+        lectureTitle: lectureTitle,
+        lecturerName: lecturerName,
+        postedAt: postedAt,
+      ),
     );
   }
 

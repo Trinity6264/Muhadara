@@ -12,6 +12,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../services/cloud_storage_service.dart';
 import '../services/cloud_store_service.dart';
+import '../services/file_download_service.dart';
 import '../services/file_selected_service.dart';
 import '../services/firebase_service.dart';
 import '../services/ob_service.dart';
@@ -33,4 +34,5 @@ void setupLocator({String? environment, EnvironmentFilter? environmentFilter}) {
   locator.registerLazySingleton(() => FileSelectService());
   locator.registerLazySingleton(() => CloudStoreService());
   locator.registerLazySingleton(() => ObService());
+  locator.registerLazySingleton(() => FileDownloadService());
 }

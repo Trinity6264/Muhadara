@@ -54,7 +54,6 @@ class LectureViewModel extends BaseViewModel {
     } else {
       setBusy(true);
       task = _storage.upLoadAudio(audioSelect!);
-      notifyListeners();
       final snapshot = await task!.whenComplete(() {});
       final urlDownload = await snapshot.ref.getDownloadURL();
       await _storage.upLoadPic(imageSelect!);

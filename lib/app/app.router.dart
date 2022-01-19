@@ -56,11 +56,17 @@ class StackedRouter extends RouterBase {
       );
     },
     AudioPlayerView: (data) {
-      var args = data.getArgs<AudioPlayerViewArguments>(nullOk: false);
+      var args = data.getArgs<AudioPlayerViewArguments>(
+        orElse: () => AudioPlayerViewArguments(),
+      );
       return MaterialPageRoute<dynamic>(
         builder: (context) => AudioPlayerView(
           key: args.key,
-          content: args.content,
+          audioUrl: args.audioUrl,
+          imageurl: args.imageurl,
+          lectureTitle: args.lectureTitle,
+          lecturerName: args.lecturerName,
+          postedAt: args.postedAt,
           index: args.index,
         ),
         settings: data,
@@ -116,9 +122,20 @@ class StackedRouter extends RouterBase {
 /// AudioPlayerView arguments holder class
 class AudioPlayerViewArguments {
   final Key? key;
-  final PostContentModel? content;
+  final String? audioUrl;
+  final String? imageurl;
+  final String? lectureTitle;
+  final String? lecturerName;
+  final DateTime? postedAt;
   final int? index;
-  AudioPlayerViewArguments({this.key, required this.content, this.index});
+  AudioPlayerViewArguments(
+      {this.key,
+      this.audioUrl,
+      this.imageurl,
+      this.lectureTitle,
+      this.lecturerName,
+      this.postedAt,
+      this.index});
 }
 
 /// LoginView arguments holder class

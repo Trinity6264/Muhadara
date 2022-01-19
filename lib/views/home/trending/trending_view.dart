@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:muhadara/shared/collor_pallet.dart';
 import 'package:muhadara/view_models/home_sub_view_model.dart';
@@ -30,7 +31,13 @@ class TrendingView extends StatelessWidget {
                         final data = model.trendingData![index];
                         return GestureDetector(
                           onTap: () {
-                            model.toPlayer(data);
+                            model.toPlayer(
+                              audioUrl: data.audioUrl.toString(),
+                              imageurl: data.imageurl.toString(),
+                              lectureTitle: data.lectureTitle.toString(),
+                              lecturerName: data.lecturerName.toString(),
+                              postedAt: data.postedAt!,
+                            );
                           },
                           child: Container(
                             margin: const EdgeInsets.only(left: 5.0, top: 2.0),
@@ -39,8 +46,15 @@ class TrendingView extends StatelessWidget {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    data.imageurl.toString(),
+                                  child: CachedNetworkImage(
+                                    imageUrl: data.imageurl.toString(),
+                                    useOldImageOnUrlChange: true,
+                                    placeholder: (context, index) {
+                                      return imageContainer();
+                                    },
+                                    errorWidget: (context, url, error) {
+                                      return Image.asset('images/noimage.jpg');
+                                    },
                                     fit: BoxFit.cover,
                                     height: 130.0,
                                     width: 200,

@@ -78,3 +78,18 @@ class ShimmerEffect extends StatelessWidget {
     );
   }
 }
+
+Widget imageContainer() {
+  return Shimmer.fromColors(
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+      ),
+      width: 200,
+      height: 130.0,
+    ),
+    baseColor: baseColor,
+    highlightColor: highlightColor,
+  );
+}

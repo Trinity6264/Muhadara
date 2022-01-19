@@ -1,6 +1,6 @@
+import 'package:muhadara/model/offline_download_model.dart';
 import 'package:muhadara/model/search_model.dart';
 import 'package:muhadara/objectbox.g.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -41,4 +41,38 @@ class ObService {
       .query()
       .watch(triggerImmediately: true)
       .map((event) => event.find());
+
+  // todo for downloads
+  // insert data
+
+  int? insertDownloadData({
+    required String audioPath,
+    required String imagePath,
+    required String lecturerName,
+    required String lectureTitle,
+    required DateTime savedAt,
+  }) {
+    final downLoadData = OfflineDownloadModel(
+      audioPath: audioPath,
+      imagePath: imagePath,
+      lectureTitle: lectureTitle,
+      lecturerName: lecturerName,
+      savedAt: savedAt,
+    );
+    final response = _store?.box<OfflineDownloadModel>();
+    final data = response?.put(downLoadData, mode: PutMode.insert);
+    return data;
+  }
+
+  Stream<List<OfflineDownloadModel>> get fetchDownLoads => _store!
+      .box<OfflineDownloadModel>()
+      .query()
+      .watch(triggerImmediately: true)
+      .map((event) => event.find());
+  // DELETE DOWNLOAD
+  Future<bool?> deleteFile(int id) async {
+    final data = _store?.box<OfflineDownloadModel>();
+    final response = data?.remove(id);
+    return response;
+  }
 }

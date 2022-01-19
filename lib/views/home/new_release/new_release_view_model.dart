@@ -20,8 +20,23 @@ class NewReleaseViewModel extends BaseViewModel {
     return data;
   }
 
-  void toPlayer(PostContentModel postContent) {
-    _navService.navigateTo(Routes.audioPlayerView,
-        arguments: AudioPlayerViewArguments(content: postContent, index: 0));
+  void toPlayer({
+    required String audioUrl,
+    required String imageurl,
+    required String lectureTitle,
+    required String lecturerName,
+    required DateTime postedAt,
+  }) {
+    _navService.navigateTo(
+      Routes.audioPlayerView,
+      arguments: AudioPlayerViewArguments(
+        index: 0,
+        audioUrl: audioUrl,
+        imageurl: imageurl,
+        lectureTitle: lectureTitle,
+        lecturerName: lecturerName,
+        postedAt: postedAt,
+      ),
+    );
   }
 }
